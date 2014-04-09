@@ -1,3 +1,9 @@
+/*
+  array of commonly used sites that have fixed this bug to reduce server load
+  */
+var siteArray = ['google', 'facebook.com', 'etsy.com', 'thinkgeek.com' 'github.com', 'yahoo.com', 'twitter.com'];
+var isFilteredURL = 0;
+
 //source: http://stackoverflow.com/questions/8498592/extract-root-domain-name-from-string
 function parseURL(url){
     parsed_url = {}
@@ -47,22 +53,32 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
           var currentURL = tab.url;
           var parsedURL = parseURL(currentURL);
           //Google, bit.ly, t.co (and other URL shortners) do some funny URL things, we want to stop it, ergo reducing requests to the server
-          //if(parsedURL.domain.indexOf("google") == -1 || parsedURL.domain.indexOf("bit.ly") == -1 || parsedURL.domain.indexOf("t.co") == -1 || parsedURL.domain.indexOf("buff.ly") == -1) {
+          siteArray.forEach(function(site) {
+            if(parsedURL.domain.indexOf(site) >= 0) {
+              isFilteredURL = 1;
+            }
+          })
+          if(isFilteredURL === 0) {
             //doesn't contain any of the above, carry on
             var bleedURL = 'http://bleed-1161785939.us-east-1.elb.amazonaws.com/bleed/' + parsedURL.domain;
             promise.get(bleedURL).then(function(error, text, xhr) {
               if (error) {
                 //silently fail
+                console.log("[ERR]: Request failed");
                 return;
               } else {
                 //parse as JSON, check result
                 var result = JSON.parse(text);
                 console.log('Result for site ' + bleedURL + ': ' + result.code);
+                console.log('Further details: ' + result.data);
+                if(result.error) {
+                  console.log('[ERR]:' + result.error);
+                }
                 if(result.code === 0) {
                   var notification = webkitNotifications.createNotification(
                     'logo.png',  // icon url - can be relative
                     'This site is vulnerable!',  // notification title
-                    'The domain ' + parsedURL.domain + ' is vulnerable to the Heartbleed SSL bug.'  // notification body text
+                    'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
                   );
                   notification.show();
                 } else {
@@ -71,6 +87,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                 }
               }
             });
-        });
+          } else {
+            //we know these are kosher, so simply reset the filtered URL
+            console.log('Ignoring ' + parsedURL.domain);
+            isFilteredURL = 0;
+          }
+      });
     }
 });
