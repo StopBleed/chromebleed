@@ -1,7 +1,7 @@
 /*
   array of commonly used sites that have fixed this bug to reduce server load
   */
-var siteArray = ['google', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com'];
+var siteArray = ['amazonaws.com', 'google', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com'];
 var isFilteredURL = 0;
 
 //source: http://stackoverflow.com/questions/8498592/extract-root-domain-name-from-string
