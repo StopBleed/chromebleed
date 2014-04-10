@@ -1,7 +1,7 @@
 /*
  array of commonly used sites that have fixed this bug to reduce server load
  */
-var siteArray = ['amazonaws.com', 'google', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com'];
+var siteArray = ['amazonaws.com', 'google.com', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com'];
 var isFilteredURL = 0;
 
 var notificationPermission = 0;
@@ -71,12 +71,28 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                 chrome.tabs.getSelected(null, function(tab) {
                     var currentURL = tab.url;
                     var parsedURL = parseURL(currentURL);
+                    // Bail if it is an internal chrome url, this should be extended
+                    if (parsedURL.protocol == 'chrome') {
+                        return;
+                    }
+                    if (parsedURL.domain == 'devtools:') {
+                        return;
+                    }
+
                     console.log("Domain: " + parsedURL.domain);
                     //Google, bit.ly, t.co (and other URL shortners) do some funny URL things, we want to stop it, ergo reducing requests to the server
                     isFilteredURL = 0;
                     // Check for the domain to be in our whitelist
                     siteArray.some(function(site) {
-                        if (parsedURL.domain.indexOf(site) >= 0) {
+                        if (parsedURL.domain == site) {
+                            isFilteredURL = 1;
+                            return true;
+                        }
+                    });
+                    // Check for the domain to be in our cached entries
+                    var isokay = JSON.parse(localStorage.isokay || "[]");
+                    isokay.some(function(site) {
+                        if (parsedURL.domain == site) {
                             isFilteredURL = 1;
                             return true;
                         }
@@ -109,6 +125,13 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                         notification.cancel();
                                     }
                                 } else {
+                                    if (!result.error) {
+                                        isokay.push(parsedURL.domain);
+                                        while (isokay.length > 250) {
+                                            isokay.shift();
+                                        }
+                                        localStorage.isokay = JSON.stringify(isokay);
+                                    }
                                     //do nothing unless we want to show all notifications
                                     if (JSON.parse(localStorage.isShowingAll)) {
                                         var icon_name = (result.error ? 'logo-err48.png' : 'logo-ok48.png');
@@ -128,9 +151,14 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 }
                             }
                         });
-                    } else {
+                    } else if (JSON.parse(localStorage.isShowingAll)) {
                         //we know these are kosher, so simply reset the filtered URL
                         console.log('Ignoring ' + parsedURL.domain);
+                        var notification = webkitNotifications.createNotification(
+                                icon_name, // icon url - can be relative
+                                'Site seems Ok!', // notification title
+                                'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!'  // notification body text
+                                );
                     }
                 });
             }
