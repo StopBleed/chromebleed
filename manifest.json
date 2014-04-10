@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Chromebleed",
   "description": "Displays a warning if the site you are browsing is affected by the Heartbleed bug",
-  "version": "1.1",
+  "version": "1.2",
   "permissions": [
     "notifications",
     "activeTab",
@@ -21,6 +21,12 @@
     "page": "background.html",
     "js": "background.js"
   },
+  "content_scripts": [{
+    "matches":        ["http://*/*", "https://*/*"],
+    "include_globs":  ["http://www.google.*/*", "https://www.google.*/*"],
+    "css": ["search/search.css"],
+    "js": ["search/jquery.js", "promise.min.js", "request.js", "search/search.js"]
+  }],
   "browser_action": {
     "default_icon": "logo.png",
     "default_popup": "popup.html"
