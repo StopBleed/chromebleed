@@ -2,7 +2,8 @@
 
 body {
     margin: 120px;
-    font: 1.0em Arial, sans-serif
+    font-family: 'Avenir Next', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.0em;
 }
 
 h1 { font-size: 1.85em }
