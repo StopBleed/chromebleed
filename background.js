@@ -1,7 +1,7 @@
 /*
  array of commonly used sites that have fixed this bug to reduce server load
  */
-var siteArray = ['amazonaws.com', 'google.com', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com'];
+var siteArray = ['amazonaws.com', 'google.com', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com', 'reddit.com', 'ml.com', 'bankofamerica.com', 'bankofamerica.co.uk'];
 var isFilteredURL = 0;
 
 var notificationPermission = 0;
