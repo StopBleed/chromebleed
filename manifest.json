@@ -16,6 +16,7 @@
     "256": "icon256.png",
     "512": "icon512.png"
   },
+  "options_page":"options.html",
   "background": {
     "page": "background.html",
     "js": "background.js"
@@ -25,6 +26,9 @@
     "default_popup": "popup.html"
   },
   "web_accessible_resources": [
-    "logo.png"
+    "logo.png",
+    "icon48.png",
+    "logo-err48.png",
+    "logo-ok48.png"
   ]
 }
