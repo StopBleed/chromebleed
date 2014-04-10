@@ -1,0 +1,23 @@
+<!--
+Copyright (c) 2014 The Chromebleed Contributors. All rights reserved.
+An option page for configuring notifications.
+-->
+<!DOCTYPE html>
+<title>Chromebleed Options</title>
+<link rel="stylesheet" href="options.css">
+<div>  
+    <h1>
+        <img src="icon128.png" alt="Chromebleed"> Chromebleed
+    </h1>    
+    <p>The Chromebleed extension checks to see if the site you are currently using is affected by the <a href="http://heartbleed.com/" target="_blank">Heartbleed</a> bug.</p>
+    <p class="social">This tool was developed by <a href="http://twitter.com/mightyshakerjnr" target="_blank">Jamie Hoyle</a>.</br>
+        It is based on the excellent work of <a href="https://twitter.com/filosottile" target="_blank">Filippo Valsorda</a>.</body>
+    <h2>Options</h2>
+    <form id="options">
+        <div><input type="checkbox" name="isActivated" id="isActivated" checked> <label for="isActivated">Notifications Activated</label></div>
+        <br/>
+        <div><input type="checkbox" name="isShowingAll" id="isShowingAll" checked> <label for="isShowingAll">Show All Notifications</label></div>
+    </form>
+</div>
+<script src="options.js"></script>
+

@@ -1,0 +1,28 @@
+/* Copyright (c) 2014 The Chromebleed Contributors. All rights reserved. */
+
+body {
+    margin: 120px;
+    font: 1.0em Arial, sans-serif
+}
+
+h1 { font-size: 1.85em }
+
+h1 img {
+    margin: 1px 5px 0 1px;
+    vertical-align: middle
+}
+
+h2 {
+    border-top: 1px solid #9cc2ef;
+    background-color: #ebeff9;
+    padding: 3px 5px;
+    font-size: 1.2em;
+}
+a {
+    color: #b90000;
+    text-decoration: none;
+}
+
+a:hover {
+    font-weight: bold;
+}
