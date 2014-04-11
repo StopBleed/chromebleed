@@ -1,5 +1,3 @@
-var isokay = JSON.parse(localStorage.isokay || "[]");
-
 //source: http://stackoverflow.com/questions/8498592/extract-root-domain-name-from-string
 function parseURL(url) {
     parsed_url = {}
@@ -42,7 +40,8 @@ function parseURL(url) {
 
 function requestURL(url, callback) {
   var bleedURL = 'http://bleed-1161785939.us-east-1.elb.amazonaws.com/bleed/' + url;
-  promise.get(bleedURL).then(function(error, text, xhr) {
+  return new promise.get(bleedURL).then(function(error, text, xhr) {
+      //console.log("[xhr]: " + xhr);
       if (error) {
           //silently fail
           console.log("[ERR]: Request failed");
