@@ -2,7 +2,6 @@ function checkURL(host, tld, parsedDomain) {
   var url = host + '.' + tld;
   requestURL(parsedDomain, function(text) {
     var result = JSON.parse(text);
-    console.log(url + ': ' + result.code);
     //register it as checked
     if(result.code === 0) {
       //it is vuln.
@@ -29,11 +28,9 @@ function checkElements() {
     var alreadyChecked = 0;
     var checkingURL = ($(this).attr('href'));
     var parsedURL = parseURL(checkingURL);
-    console.log(parsedURL.host + '.' + parsedURL.tld);
     $(this).attr('class', parsedURL.host + parsedURL.tld);
     //check if already checked
     if($(this).attr('checkedByChromebleed')) {
-      console.log('already checked, skipping');
       alreadyChecked = 1;
     } else {
       //check if in last 250 URLs
@@ -67,10 +64,8 @@ function searchUpdate() {
   newEid = $('#rso').attr('eid');
   newSearchText = $('#gbqfq').val();
   if(newEid === eid) {
-    console.log('not new yet');
     setTimeout(searchUpdate, 500);
   } else if(newSearchText === searchText) {
-    console.log('same search text');
   } else {
     checkElements();
   }
