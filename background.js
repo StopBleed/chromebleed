@@ -1,11 +1,10 @@
 /*
  array of commonly used sites that have fixed this bug to reduce server load
  */
-var siteArray = ['amazonaws.com', 'google.com', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com', 'reddit.com', 'ml.com', 'bankofamerica.com', 'bankofamerica.co.uk'];
+// script is now loaded and executed.
 var protocolArray = ['chrome', 'chrome-devtools', 'chrome-extension'];
-var isFilteredURL = 0;
+var isFilteredURL = false;
 
-var notificationPermission = 0;
 if (window.webkitNotifications && window.webkitNotifications.checkPermission() === 1) {
     window.webkitNotifications.requestPermission();
 }
@@ -39,22 +38,30 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                     }
                     console.log("Domain: " + parsedURL.domain);
                     //Google, bit.ly, t.co (and other URL shortners) do some funny URL things, we want to stop it, ergo reducing requests to the server
-                    isFilteredURL = 0;
-                    // Check for the domain to be in our whitelist
-                    siteArray.some(function(site) {
-                        if (parsedURL.domain == site) {
-                            isFilteredURL = 1;
-                            return true;
+                    // Check for the domain to be in our whitelist or already cached as ok
+                    isFilteredURL = isCachedSite(parsedURL.domain);
+                    if (isFilteredURL) {
+                        if (JSON.parse(localStorage.isShowingAll)) {
+                            //we know these are kosher, so simply reset the filtered URL
+                            console.log('Ignoring ' + parsedURL.domain);
+                            var icon_name = 'logo-ok48.png';
+                            var notification = webkitNotifications.createNotification(
+                                    icon_name, // icon url - can be relative
+                                    'Site is Filtered!', // notification title
+                                    'All Good, ' + parsedURL.domain + ' ignored!'  // notification body text
+                                    );
+                            notification.show();
+                            notification.onclick = function() {
+                                // Handle action from notification being clicked.
+                                notification.cancel();
+                            }
                         }
-                    });
-                    // Check for the domain to be in our cached entries
-                    isokay.some(function(site) {
-                        if (parsedURL.domain == site) {
-                            isFilteredURL = 1;
-                            return true;
+                    } else {
+                        // First check to see if we have this domain already cached as a Bleed Site
+                        if (isCachedBleedSite(parsedURL.domain)){
+                            showBleedSiteMessage(parsedURL.domain);
+                            return;
                         }
-                    });
-                    if (isFilteredURL === 0) {
                         //doesn't contain any of the above, carry on
                         requestURL(parsedURL.domain, function(text) {
                             //parse as JSON, check result
@@ -65,23 +72,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 console.log('[ERR]:' + result.error);
                             }
                             if (result.code === 0) {
-                                var notification = webkitNotifications.createNotification(
-                                        'icon48.png', // icon url - can be relative
-                                        'This site is vulnerable!', // notification title
-                                        'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
-                                        );
-                                notification.show();
-                                notification.onclick = function() {
-                                    // Handle action from notification being clicked.
-                                    notification.cancel();
-                                }
+                                cacheBleedSite(parsedURL.domain);
+                                showBleedSiteMessage();
                             } else {
                                 if (!result.error) {
-                                    isokay.push(parsedURL.domain);
-                                    while (isokay.length > 250) {
-                                        isokay.shift();
-                                    }
-                                    localStorage.isokay = JSON.stringify(isokay);
+                                    cacheSite(parsedURL.domain);
                                 }
                                 //do nothing unless we want to show all notifications
                                 if (JSON.parse(localStorage.isShowingAll)) {
@@ -101,20 +96,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 return;
                             }
                         });
-                    } else if (JSON.parse(localStorage.isShowingAll)) {
-                        //we know these are kosher, so simply reset the filtered URL
-                        console.log('Ignoring ' + parsedURL.domain);
-                        var icon_name = 'logo-ok48.png';
-                        var notification = webkitNotifications.createNotification(
-                                icon_name, // icon url - can be relative
-                                'Site is Filtered!', // notification title
-                                'All Good, ' + parsedURL.domain + ' ignored!'  // notification body text
-                                );
-                        notification.show();
-                        notification.onclick = function() {
-                            // Handle action from notification being clicked.
-                            notification.cancel();
-                        }
+
                     }
                 });
             }
@@ -125,3 +107,16 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
         console.log("webkitNotifications: disabled " + window.webkitNotifications.checkPermission());
     }
 });
+
+function showBleedSiteMessage(parsedDomain) {
+    var notification = webkitNotifications.createNotification(
+            'icon48.png', // icon url - can be relative
+            'This site is vulnerable!', // notification title
+            'The domain ' + parsedDomain + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
+            );
+    notification.show();
+    notification.onclick = function() {
+        // Handle action from notification being clicked.
+        notification.cancel();
+    }
+}
