@@ -29,5 +29,12 @@ window.addEventListener('load', function() {
         localStorage.isShowingAll = options.isShowingAll.checked;
         console.log("isShowingAll:" + options.isShowingAll.checked);
     };
+    // Clear cached sites on click
+    options.clearCachedSites.onclick = function() {
+        resetCachedSites();
+        resetCachedBleedSites();
+        alert('Cached Sites Cleared!');
+        //console.log(" Cached Sites after clear:" + JSON.stringify(cachedSites) + JSON.stringify(cachedBleedSites));
+    };
 
 });
