@@ -74,6 +74,8 @@ function showNotification(result, parsedURL, isFilteredURL) {
 	
 	//also change the 'heartbleed' icon at top right of browser
 	chrome.browserAction.setIcon({path:icon_name});
+	//add tooltip with title
+	chrome.browserAction.setTitle({title:title});
 }
 
 // background script for access to Chrome APIs
