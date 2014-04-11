@@ -119,7 +119,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                     });
                     if (isFilteredURL === 0) {
                         //doesn't contain any of the above, carry on
-                        var error = requestURL(parsedURL.domain, function(text) {
+                        requestURL(parsedURL.domain, function(text) {
                             //parse as JSON, check result
                             var result = JSON.parse(text);
                             console.log('Result for site ' + parsedURL.domain + ': ' + result.code);
