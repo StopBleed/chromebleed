@@ -71,11 +71,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                 chrome.tabs.getSelected(null, function(tab) {
                     var currentURL = tab.url;
                     var parsedURL = parseURL(currentURL);
+                    
                     // Bail if it is an internal chrome url, this should be extended
-                    if (parsedURL.protocol == 'chrome') {
+                    if ( parsedURL.protocol.indexOf('chrome') != -1 ) {
                         return;
                     }
-                    if (parsedURL.domain == 'devtools:') {
+                    // Not for devtools
+                    if (parsedURL.domain == 'devtools') {
+                        return;
+                    }
+                    // Skip non-https domains
+                    if (parsedURL.protocol != 'https') {
                         return;
                     }
 
