@@ -56,7 +56,7 @@ function showNotification(result, parsedURL, isFilteredURL) {
 		            title,
 		            message
 	);
-	notification.show();
+	notification.show();	
 	notification.onclick = function() {
 			// Handle action from notification being clicked.
 			notification.cancel();
@@ -72,6 +72,8 @@ function showNotification(result, parsedURL, isFilteredURL) {
 		};
 	}
 	
+	//also change the 'heartbleed' icon at top right of browser
+	chrome.browserAction.setIcon({path:icon_name});
 }
 
 // background script for access to Chrome APIs
