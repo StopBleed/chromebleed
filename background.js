@@ -145,16 +145,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 return;
                             }
                         });
-                        
-                        //show error popup so that user knows
-                        //request failed
-                        if(error){
-                        	//do nothing unless we want to show all notifications
-                            if (JSON.parse(localStorage.isShowingAll)) {
-                            	showNotification(null, parsedURL, false);
-                        	}
-                        }
-                        
                     } else if (JSON.parse(localStorage.isShowingAll)) {
                     	 //we know these are kosher, so simply reset the filtered URL
                         console.log('Ignoring ' + parsedURL.domain);
