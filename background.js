@@ -29,8 +29,8 @@ function showNotification(result, parsedURL, isFilteredURL) {
 
 	//for filtered URLs we assume all is ok
 	if(isFilteredURL){
-		title = 'Site is Filtered!';
-		message = 'All Good, ' + parsedURL.domain + ' ignored!';
+		title = 'Site is Fixed!';
+		message = 'All Good, ' + parsedURL.domain + ' is known to be fixed';
 	}
 	else if(result) {
 		icon_name = result.code == 0 ? 'icon48.png' : (result.error ? 'logo-err48.png' : 'logo-ok48.png');
