@@ -72,7 +72,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                             }
                             if (result.code === 0) {
                                 cacheBleedSite(parsedURL.domain);
-                                showBleedSiteMessage();
+                                showBleedSiteMessage(parsedURL.domain);
                             } else {
                                 if (!result.error) {
                                     cacheSite(parsedURL.domain);
