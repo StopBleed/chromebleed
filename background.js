@@ -20,7 +20,7 @@ if (!localStorage.isInitialized) {
 }
 
 //show a notification dialog to the user e.g. on error, success, warning
-function showNotification(result, parsedURL, isLocalURL, isFilteredURL) {
+function showNotification(result, parsedURL, isFilteredURL) {
 	
 	//default icon
 	var icon_name = 'logo-ok48.png';
@@ -32,13 +32,7 @@ function showNotification(result, parsedURL, isLocalURL, isFilteredURL) {
 		title = 'Site is Filtered!';
 		message = 'All Good, ' + parsedURL.domain + ' ignored!';
 	}
-	//if result from request available
-	else if(isLocalURL) {
-		title = 'Local URL';
-		message = 'You have opened a local site ['+ parsedURL.protocol + ':\\'+ parsedURL.domain +'] - this site will not be tested.';
-	}
 	else if(result) {
-		//alert('showNotification:' + result.code);
 		icon_name = result.code == 0 ? 'icon48.png' : (result.error ? 'logo-err48.png' : 'logo-ok48.png');
 		title = result.code == 0 ? 'This site is vulnerable!' : (result.error ? 'Use Caution' : 'Site seems Ok!');
 		message = result.code == 0 ? 'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.' : 
@@ -126,10 +120,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                             console.log('Further details: ' + result.data);
                             if (result.error) {
                                 console.log('[ERR]:' + result.error);
-                                showNotification(result, parsedURL, false);
+                                showNotification(result, parsedURL);
                             }
                             if (result.code === 0) {
-                            	showNotification(result, parsedURL, false);
+                            	showNotification(result, parsedURL);
                             } else {
                                 if (!result.error) {
                                     isokay.push(parsedURL.domain);
@@ -140,7 +134,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 }
                                 //do nothing unless we want to show all notifications
                                 if (JSON.parse(localStorage.isShowingAll)) {
-                                	showNotification(result, parsedURL, false);
+                                	showNotification(result, parsedURL);
                                 }
                                 return;
                             }
@@ -148,7 +142,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                     } else if (JSON.parse(localStorage.isShowingAll)) {
                     	 //we know these are kosher, so simply reset the filtered URL
                         console.log('Ignoring ' + parsedURL.domain);
-                        showNotification(null, parsedURL, false, true);
+                        showNotification(null, parsedURL, true);
                     }
                 });
             }
