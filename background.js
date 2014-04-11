@@ -60,22 +60,29 @@ function parseURL(url) {
 chrome.tabs.onUpdated.addListener(function(tabId, info) {
     // Test for notification support.
     if (window.webkitNotifications && window.webkitNotifications.checkPermission() === 0) {
-        console.log("-------------- onUpdated ---------------");
+        console.log("-------------- onUpdated- ---------------");
 
         // Only show notifications when the option is activated
         if (JSON.parse(localStorage.isActivated)) {
             console.log("Notifications: " + JSON.parse(localStorage.isActivated));
             //check page has loaded
             if (info.status === 'complete') {
-                //get the tab's URL
-                chrome.tabs.getSelected(null, function(tab) {
-                    var currentURL = tab.url;
+
+                chrome.tabs.query(
+                    {'active': true,
+                    'lastFocusedWindow': true},
+                    function(tabs) {
+                    var currentURL = tabs[0].url;
                     var parsedURL = parseURL(currentURL);
-                    // Bail if it is an internal chrome url, this should be extended
-                    if (parsedURL.protocol == 'chrome') {
+                    var parsedSchema = parsedURL.protocol;
+
+                    // Ignore chrome internal protocols
+                    if ( parsedSchema.indexOf('chrome') != -1 ) {
                         return;
                     }
-                    if (parsedURL.domain == 'devtools:') {
+
+                    // Skip non-https urls
+                    if ( parsedSchema != 'https' ) {
                         return;
                     }
 
@@ -155,7 +162,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                         //we know these are kosher, so simply reset the filtered URL
                         console.log('Ignoring ' + parsedURL.domain);
                         var notification = webkitNotifications.createNotification(
-                                icon_name, // icon url - can be relative
+                                'logo-ok48.png', // icon url - can be relative
                                 'Site seems Ok!', // notification title
                                 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!'  // notification body text
                                 );
