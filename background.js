@@ -3,6 +3,8 @@
  */
 var siteArray = ['amazonaws.com', 'google.com', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com', 'reddit.com', 'ml.com', 'bankofamerica.com', 'bankofamerica.co.uk'];
 var isFilteredURL = 0;
+//global reference so we can close open notifications when showing new notification
+var notification = null;
 
 var notificationPermission = 0;
 if (window.webkitNotifications && window.webkitNotifications.checkPermission() === 1) {
@@ -18,7 +20,7 @@ if (!localStorage.isInitialized) {
 
 //source: http://stackoverflow.com/questions/8498592/extract-root-domain-name-from-string
 function parseURL(url) {
-    parsed_url = {}
+    parsed_url = {};
 
     if (url == null || url.length == 0)
         return parsed_url;
@@ -52,12 +54,73 @@ function parseURL(url) {
     }
 
     parsed_url.parent_domain = parsed_url.host + '.' + parsed_url.tld;
-
     return parsed_url;
+}
+
+//show a notification dialog to the user e.g. on error, success, warning
+function showNotification(result, parsedURL, isLocalURL, isFilteredURL) {
+	
+	//default icon
+	var icon_name = 'logo-ok48.png';
+	var message = 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!';
+	var title = 'Site seems Ok!';
+
+	//for filtered URLs we assume all is ok
+	if(isFilteredURL){
+		//use defaults - all OK
+	}
+	//if result from request available
+	else if(isLocalURL) {
+		title = 'Local URL';
+		message = 'You have opened a local site ['+ parsedURL.protocol + ':\\'+ parsedURL.domain +'] - this site will not be tested.';
+	}
+	else if(result) {
+		//alert('showNotification:' + result.code);
+		icon_name = result.code == 0 ? 'icon48.png' : (result.error ? 'logo-err48.png' : 'logo-ok48.png');
+		title = result.code == 0 ? 'This site is vulnerable!' : (result.error ? 'Use Caution' : 'Site seems Ok!');
+		message = result.code == 0 ? 'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.' : 
+					  (result.error ? 'Use Caution, ' + parsedURL.domain + ' returned an error [' + result.error + ']. Unable to test for Heartbleed vulnerability.' 
+					   : 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!');
+	}
+	else {
+		icon_name = 'logo-err48.png';
+		title = 'Error';
+		message = 'Request to '+ parsedURL.domain + ' failed';
+	}
+	
+	//close open notifications
+	if(notification){
+		notification.cancel();
+	}
+	
+	//show the notification message with appropriate content
+	notification = webkitNotifications.createNotification(
+		            icon_name,
+		            title,
+		            message
+	);
+	notification.show();
+	notification.onclick = function() {
+			// Handle action from notification being clicked.
+			notification.cancel();
+	};
+		
+	//keep open for 10 seconds then close
+	//if not a vulnerability warning
+	if(!result || result.code !== 0) {
+		notification.ondisplay = function(event) {
+			setTimeout(function() {
+					event.currentTarget.cancel();
+			    	}, 10000);
+		};
+	}
+	
 }
 
 // background script for access to Chrome APIs
 chrome.tabs.onUpdated.addListener(function(tabId, info) {
+	
+	
     // Test for notification support.
     if (window.webkitNotifications && window.webkitNotifications.checkPermission() === 0) {
         console.log("-------------- onUpdated ---------------");
@@ -72,13 +135,15 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                     var currentURL = tab.url;
                     var parsedURL = parseURL(currentURL);
                     // Bail if it is an internal chrome url, this should be extended
-                    if (parsedURL.protocol == 'chrome') {
+                    if (parsedURL.protocol == 'chrome' || 
+                    		parsedURL.protocol == 'chrome-extension' || 
+                    			parsedURL.domain == 'devtools') {
+                    	//do nothing unless we want to show all notifications
+                        if (JSON.parse(localStorage.isShowingAll)) {
+                        	showNotification(null, parsedURL, true, false);
+                        }
                         return;
                     }
-                    if (parsedURL.domain == 'devtools:') {
-                        return;
-                    }
-
                     console.log("Domain: " + parsedURL.domain);
                     //Google, bit.ly, t.co (and other URL shortners) do some funny URL things, we want to stop it, ergo reducing requests to the server
                     isFilteredURL = 0;
@@ -104,6 +169,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                             if (error) {
                                 //silently fail
                                 console.log("[ERR]: Request failed");
+                                //do nothing unless we want to show all notifications
+                                if (JSON.parse(localStorage.isShowingAll)) {
+                                	showNotification(null, parsedURL, false);
+                            	}
                                 return;
                             } else {
                                 //parse as JSON, check result
@@ -111,19 +180,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 console.log('Result for site ' + bleedURL + ': ' + result.code);
                                 console.log('Further details: ' + result.data);
                                 if (result.error) {
+                                	showNotification(result, parsedURL, false);
                                     console.log('[ERR]:' + result.error);
                                 }
                                 if (result.code === 0) {
-                                    var notification = webkitNotifications.createNotification(
-                                            'icon48.png', // icon url - can be relative
-                                            'This site is vulnerable!', // notification title
-                                            'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
-                                            );
-                                    notification.show();
-                                    notification.onclick = function() {
-                                        // Handle action from notification being clicked.
-                                        notification.cancel();
-                                    }
+                                	showNotification(result, parsedURL, false, false);
                                 } else {
                                     if (!result.error) {
                                         isokay.push(parsedURL.domain);
@@ -134,18 +195,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                     }
                                     //do nothing unless we want to show all notifications
                                     if (JSON.parse(localStorage.isShowingAll)) {
-                                        var icon_name = (result.error ? 'logo-err48.png' : 'logo-ok48.png');
-                                        var message = (result.error ? 'Use Caution, ' + parsedURL.domain + ' had error [' + result.error + ']' : 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!');
-                                        var notification = webkitNotifications.createNotification(
-                                                icon_name, // icon url - can be relative
-                                                'Site seems Ok!', // notification title
-                                                message  // notification body text
-                                                );
-                                        notification.show();
-                                        notification.onclick = function() {
-                                            // Handle action from notification being clicked.
-                                            notification.cancel();
-                                        }
+                                    	showNotification(result, parsedURL, false, false);
                                     }
                                     return;
                                 }
@@ -154,11 +204,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                     } else if (JSON.parse(localStorage.isShowingAll)) {
                         //we know these are kosher, so simply reset the filtered URL
                         console.log('Ignoring ' + parsedURL.domain);
-                        var notification = webkitNotifications.createNotification(
-                                icon_name, // icon url - can be relative
-                                'Site seems Ok!', // notification title
-                                'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!'  // notification body text
-                                );
+                        showNotification(null, parsedURL, false, true);
                     }
                 });
             }
