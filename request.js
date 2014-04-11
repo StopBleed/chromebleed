@@ -1,3 +1,5 @@
+var isokay = JSON.parse(localStorage.isokay || "[]");
+
 //source: http://stackoverflow.com/questions/8498592/extract-root-domain-name-from-string
 function parseURL(url) {
     parsed_url = {}

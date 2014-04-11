@@ -48,7 +48,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                         }
                     });
                     // Check for the domain to be in our cached entries
-                    var isokay = JSON.parse(localStorage.isokay || "[]");
                     isokay.some(function(site) {
                         if (parsedURL.domain == site) {
                             isFilteredURL = 1;
@@ -69,7 +68,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 var notification = webkitNotifications.createNotification(
                                         'icon48.png', // icon url - can be relative
                                         'This site is vulnerable!', // notification title
-                                        'The domain ' + url + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
+                                        'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
                                         );
                                 notification.show();
                                 notification.onclick = function() {
@@ -87,7 +86,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                                 //do nothing unless we want to show all notifications
                                 if (JSON.parse(localStorage.isShowingAll)) {
                                     var icon_name = (result.error ? 'logo-err48.png' : 'logo-ok48.png');
-                                    var message = (result.error ? 'Use Caution, ' + url + ' had error [' + result.error + ']' : 'All Good, ' + url + ' seems fixed or unaffected!');
+                                    var message = (result.error ? 'Use Caution, ' + parsedURL.domain + ' had error [' + result.error + ']' : 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!');
                                     var notification = webkitNotifications.createNotification(
                                             icon_name, // icon url - can be relative
                                             'Site seems Ok!', // notification title
