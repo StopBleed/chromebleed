@@ -3,7 +3,8 @@
  */
 var siteArray = ['amazonaws.com', 'google.com', 'facebook.com', 'etsy.com', 'thinkgeek.com', 'github.com', 'yahoo.com', 'twitter.com', 'reddit.com', 'ml.com', 'bankofamerica.com', 'bankofamerica.co.uk'];
 var protocolArray = ['chrome', 'chrome-devtools', 'chrome-extension'];
-var isFilteredURL = false;
+//global reference so we can close open notifications when showing new notification
+var notification = null;
 
 if (window.webkitNotifications && window.webkitNotifications.checkPermission() === 1) {
     window.webkitNotifications.requestPermission();
@@ -14,6 +15,61 @@ if (!localStorage.isInitialized) {
     localStorage.isActivated = true;   // The notification activation.
     localStorage.isShowingAll = false;   // The showing of Ok domains.
     localStorage.isInitialized = true; // The option initialization.
+}
+
+//show a notification dialog to the user e.g. on error, success, warning
+function showNotification(result, parsedURL, isFixedDomain, isRepeated) {
+
+        //default icon
+	var icon_name = 'logo-ok48.png';
+	var message = 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!';
+	var title = 'Site seems Ok!';
+
+	//for Proven URLs we assume all is ok
+	if(isFixedDomain){
+		title = 'Site is Fixed!';
+		message = 'All Good, ' + parsedURL.domain + ' is known to be fixed';
+	}
+	else if(result) {
+		icon_name = result.code === 0 ? 'icon48.png' : (result.error ? 'logo-err48.png' : 'logo-ok48.png');
+		title = result.code === 0 ? 'This site is vulnerable!' : (result.error ? 'Use Caution' : 'Site seems Ok!');
+		message = result.code === 0 ? 'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.' : 
+					  (result.error ? 'Use Caution, ' + parsedURL.domain + ' returned an error [' + result.error + ']. Unable to test for Heartbleed vulnerability.' 
+					   : 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!');
+	}
+	else {
+		icon_name = 'logo-err48.png';
+		title = 'Error';
+		message = 'Request to '+ parsedURL.domain + ' failed';
+	}
+
+	//show the notification message with appropriate content
+	notification = webkitNotifications.createNotification(
+		            icon_name,
+		            title,
+		            message
+	);
+	notification.show();	
+	notification.onclick = function() {
+			// Handle action from notification being clicked.
+			notification.cancel();
+	};
+
+	//keep open for 10 seconds then close
+	//if not a vulnerability warning or already saw this vulnerablity
+	if((result && result.code !==0) || isFixedDomain || isRepeated) {
+            var milisecs = ((isRepeated || isFixedDomain) ? 2000 : 10000);
+		notification.ondisplay = function(event) {
+			setTimeout(function() {
+					event.currentTarget.cancel();
+			    	}, milisecs);
+		};
+	}
+
+	//also change the 'heartbleed' icon at top right of browser
+	chrome.browserAction.setIcon({path:icon_name});
+	//add tooltip with title
+	chrome.browserAction.setTitle({title:title});
 }
 
 // background script for access to Chrome APIs
@@ -39,27 +95,18 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                     console.log("Domain: " + parsedURL.domain);
                     //Google, bit.ly, t.co (and other URL shortners) do some funny URL things, we want to stop it, ergo reducing requests to the server
                     // Check for the domain to be in our whitelist or already cached as ok
-                    isFilteredURL = isCachedSite(parsedURL.domain);
-                    if (isFilteredURL) {
+                    var isProvenSite = isWhiteListSite(parsedURL.domain);
+                    var isCachedURL = isCachedSite(parsedURL.domain);
+                    if (isCachedURL || isProvenSite) {
                         if (JSON.parse(localStorage.isShowingAll)) {
-                            //we know these are kosher, so simply reset the filtered URL
+                            //we know these are kosher, so simply show the filtered URL
                             console.log('Ignoring ' + parsedURL.domain);
-                            var icon_name = 'logo-ok48.png';
-                            var notification = webkitNotifications.createNotification(
-                                    icon_name, // icon url - can be relative
-                                    'Site is Filtered!', // notification title
-                                    'All Good, ' + parsedURL.domain + ' ignored!'  // notification body text
-                                    );
-                            notification.show();
-                            notification.onclick = function() {
-                                // Handle action from notification being clicked.
-                                notification.cancel();
-                            }
+                            showNotification({code:1}, parsedURL, isProvenSite, isCachedURL);
                         }
                     } else {
                         // First check to see if we have this domain already cached as a Bleed Site
                         if (isCachedBleedSite(parsedURL.domain)) {
-                            showBleedSiteMessage(parsedURL.domain);
+                            showNotification({code:0}, parsedURL, false, true);
                             return;
                         }
                         //doesn't contain any of the above, carry on
@@ -73,25 +120,14 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                             }
                             if (result.code === 0) {
                                 cacheBleedSite(parsedURL.domain);
-                                showBleedSiteMessage(parsedURL.domain);
+                                showNotification(result, parsedURL);
                             } else {
                                 if (!result.error) {
                                     cacheSite(parsedURL.domain);
                                 }
                                 //do nothing unless we want to show all notifications
                                 if (JSON.parse(localStorage.isShowingAll)) {
-                                    var icon_name = (result.error ? 'logo-err48.png' : 'logo-ok48.png');
-                                    var message = (result.error ? 'Use Caution, ' + parsedURL.domain + ' had error [' + result.error + ']' : 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!');
-                                    var notification = webkitNotifications.createNotification(
-                                            icon_name, // icon url - can be relative
-                                            'Site seems Ok!', // notification title
-                                            message  // notification body text
-                                            );
-                                    notification.show();
-                                    notification.onclick = function() {
-                                        // Handle action from notification being clicked.
-                                        notification.cancel();
-                                    }
+                                    showNotification(result, parsedURL);
                                 }
                                 return;
                             }
@@ -107,16 +143,3 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
         console.log("webkitNotifications: disabled " + window.webkitNotifications.checkPermission());
     }
 });
-
-function showBleedSiteMessage(parsedDomain) {
-    var notification = webkitNotifications.createNotification(
-            'icon48.png', // icon url - can be relative
-            'This site is vulnerable!', // notification title
-            'The domain ' + parsedDomain + ' could be vulnerable to the Heartbleed SSL bug.'  // notification body text
-            );
-    notification.show();
-    notification.onclick = function() {
-        // Handle action from notification being clicked.
-        notification.cancel();
-    }
-}
