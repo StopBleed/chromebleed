@@ -28,8 +28,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
             //check page has loaded
             if (info.status === 'complete') {
                 //get the tab's URL
-                chrome.tabs.getSelected(null, function(tab) {
-                    var currentURL = tab.url;
+                chrome.tabs.query({'active': true, 'lastFocusedWindow': true},
+                function(tabs) {
+                    var currentURL = tabs[0].url;
                     var parsedURL = parseURL(currentURL);
                     console.log("Protocol: " + parsedURL.protocol);
                     if (protocolArray.indexOf(parsedURL.protocol) >= 0) {
@@ -57,7 +58,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
                         }
                     } else {
                         // First check to see if we have this domain already cached as a Bleed Site
-                        if (isCachedBleedSite(parsedURL.domain)){
+                        if (isCachedBleedSite(parsedURL.domain)) {
                             showBleedSiteMessage(parsedURL.domain);
                             return;
                         }
