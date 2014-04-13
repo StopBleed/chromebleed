@@ -1,3 +1,31 @@
+var isShowingAll = false;
+var isShowOnGoogle = false;
+var isActivated = true;
+var eid = null;
+var searchText = null;
+
+// call background for a message handler
+function loadOptions() {
+    chrome.runtime.sendMessage({method: "getCBLocalStorage", key: "isActivated"}, function(response) {
+        if (response && response.data) {
+            console.log("  [value isActivated]" + response.data);
+            isActivated = response.data;
+        }
+    });
+    chrome.runtime.sendMessage({method: "getCBLocalStorage", key: "isShowingAll"}, function(response) {
+        if (response && response.data) {
+            console.log("  [value isShowingAll]" + response.data);
+            isShowingAll = response.data;
+        }
+    });
+    chrome.runtime.sendMessage({method: "getCBLocalStorage", key: "isShowOnGoogle"}, function(response) {
+        if (response && response.data) {
+            console.log("  [value isShowOnGoogle]" + response.data);
+            isShowOnGoogle = response.data;
+        }
+    });
+}
+
 function checkURL(host, tld, parsedDomain) {
     var url = host + '.' + tld;
     requestURL(parsedDomain, function(text) {
@@ -56,6 +84,7 @@ function checkElements() {
 }
 
 function waitForLoad() {
+    console.log("waiting...")
 //wait for results to display
     if ($('.g').length > 0) {
         //elements have arrived
@@ -78,14 +107,21 @@ function searchUpdate() {
 
 //upon page load, check page elements
 $(document).ready(function() {
+    // Load options data when page is started
+    loadOptions();
+});
+
+$(window).load(function() {
     console.log("Checking Elements ----->");
     checkElements();
 });
 
 $('#gbqfb').click(function() {
+    console.log("Search Update ----->");
     searchUpdate();
 });
 
 $('#gbqfsa').click(function() {
+    console.log("WaitFor Load ----->");
     waitForLoad();
 });
