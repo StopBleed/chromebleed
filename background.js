@@ -14,6 +14,7 @@ if (window.webkitNotifications && window.webkitNotifications.checkPermission() =
 if (!localStorage.isInitialized) {
     localStorage.isActivated = true;   // The notification activation.
     localStorage.isShowingAll = false;   // The showing of Ok domains.
+    localStorage.isShowOnGoogle = false;   // The showing of on Google Search.
     localStorage.isInitialized = true; // The option initialization.
 }
 
@@ -142,4 +143,24 @@ chrome.tabs.onUpdated.addListener(function(tabId, info) {
     } else {
         console.log("webkitNotifications: disabled " + window.webkitNotifications.checkPermission());
     }
+});
+
+// Allow the content script to access the localStorage for options
+chrome.runtime.onMessage.addListener(
+        function(request, sender, sendResponse) {
+    console.log("<-- onMessage Called -->" + request.method + " - " + request.key);
+    if (request.method === "getCBLocalStorage") {
+        switch (request.key) {
+            case 'isShowingAll':
+            case 'isShowOnGoogle':
+            case 'isActivated':
+                sendResponse({data: localStorage[request.key]});
+                break;
+            default:
+                sendResponse({}); // snub them.
+                break;
+        }
+    }
+    else
+        sendResponse({}); // snub them.
 });

@@ -13,6 +13,7 @@ window.addEventListener('load', function() {
     // Initialize the option controls.
     options.isActivated.checked = JSON.parse(localStorage.isActivated);
     options.isShowingAll.checked = JSON.parse(localStorage.isShowingAll);
+    options.isShowOnGoogle.checked = JSON.parse(localStorage.isShowOnGoogle);
 
     if (!options.isActivated.checked) {
         ghost(true);
@@ -28,6 +29,11 @@ window.addEventListener('load', function() {
     options.isShowingAll.onchange = function() {
         localStorage.isShowingAll = options.isShowingAll.checked;
         console.log("isShowingAll:" + options.isShowingAll.checked);
+    };
+    // Set whether showing on Google search page
+    options.isShowOnGoogle.onchange = function() {
+        localStorage.isShowOnGoogle = options.isShowOnGoogle.checked;
+        console.log("isShowOnGoogle:" + options.isShowOnGoogle.checked);
     };
     // Clear cached sites on click
     options.clearCachedSites.onclick = function() {
