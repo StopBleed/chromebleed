@@ -24,6 +24,15 @@ window.addEventListener('load', function() {
         localStorage.isActivated = options.isActivated.checked;
         ghost(!options.isActivated.checked);
         console.log("isActivated:" + options.isActivated.checked);
+        
+        //Visual icon for on Activated.
+        var icon_name = (options.isActivated.checked?"logo-ok48.png":"logo-off48.png")
+        var title = (options.isActivated.checked?"Chromebleed Active!":"Chromebleed Off!")
+        //also change the 'heartbleed' icon at top right of browser
+        chrome.browserAction.setIcon({path: icon_name});
+        //add tooltip with title
+        chrome.browserAction.setTitle({title: title});
+
     };
     // Set the showing of domains that seem Ok
     options.isShowingAll.onchange = function() {
