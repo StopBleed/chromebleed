@@ -10,3 +10,6 @@ Whilst some servers have been patched already, many remain that have not been pa
 
 ##Download  
 https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic
+
+##LICENSE
+This software is licensed under [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT)
