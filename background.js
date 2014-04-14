@@ -18,13 +18,19 @@ if (!localStorage.isInitialized) {
     localStorage.isInitialized = true; // The option initialization.
 }
 
+/*
+ * Always reset cached tabs on browser load.
+ */
+resetCachedTabs();
+
 //show a notification dialog to the user e.g. on error, success, warning
 function showNotification(result, parsedURL, isFixedDomain, isRepeated) {
-
+	
     //default icon
     var icon_name = 'logo-ok48.png';
     var message = 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!';
     var title = 'Site seems Ok!';
+    var resultCode = BLEED_STATE_OK;
 
     //for Proven URLs we assume all is ok
     if (isFixedDomain) {
@@ -32,17 +38,30 @@ function showNotification(result, parsedURL, isFixedDomain, isRepeated) {
         message = 'All Good, ' + parsedURL.domain + ' is known to be fixed';
     }
     else if (result) {
-        icon_name = result.code === 0 ? 'icon48.png' : (result.error ? 'logo-err48.png' : 'logo-ok48.png');
-        title = result.code === 0 ? 'This site is vulnerable!' : (result.error ? 'Use Caution' : 'Site seems Ok!');
+        icon_name = result.code === 0 ? 'icon48.png' : (result.error || result.code == BLEED_STATE_ERR ? 'logo-err48.png' : 'logo-ok48.png');
+        title = result.code === 0 ? 'This site is vulnerable!' : (result.error || result.code == BLEED_STATE_ERR ? 'Use Caution' : 'Site seems Ok!');
         message = result.code === 0 ? 'The domain ' + parsedURL.domain + ' could be vulnerable to the Heartbleed SSL bug.' :
-                (result.error ? 'Use Caution, ' + parsedURL.domain + ' returned an error [' + result.error + ']. Unable to test for Heartbleed vulnerability.'
+                (result.error || result.code == BLEED_STATE_ERR ? 'Use Caution, ' + parsedURL.domain + ' returned an error [' + result.error + ']. Unable to test for Heartbleed vulnerability.'
                         : 'All Good, ' + parsedURL.domain + ' seems fixed or unaffected!');
+        resultCode = result.error ? BLEED_STATE_ERR : result.code;
     }
     else {
         icon_name = 'logo-err48.png';
         title = 'Error';
         message = 'Request to ' + parsedURL.domain + ' failed';
+        resultCode = BLEED_STATE_REQUEST_ERR;
     }
+    
+    //cache tab warning state
+    if(resultCode){
+    	cacheTab(parsedURL.domain, resultCode);
+    }
+    
+    //close open notifications - prevents more than one notification
+    //appearing at same time.
+	if(notification){
+		notification.cancel();
+	}
 
     //show the notification message with appropriate content
     notification = webkitNotifications.createNotification(
@@ -67,11 +86,74 @@ function showNotification(result, parsedURL, isFixedDomain, isRepeated) {
         };
     }
 
-    //also change the 'heartbleed' icon at top right of browser
-    chrome.browserAction.setIcon({path: icon_name});
-    //add tooltip with title
-    chrome.browserAction.setTitle({title: title});
+    if(resultCode){
+    	setBrowserAction(resultCode);
+    }
 }
+
+/*
+ * Change the 'heartbleed' icon and title at top right of browser.
+ */
+function setBrowserAction(resultCode){
+	
+	var icon_name = 'logo-ok48.png';
+	var title = 'Site seems Ok!';
+	
+	if(resultCode){
+		switch(parseInt(resultCode)){
+			case BLEED_STATE_NOK:
+				icon_name = 'icon48.png';
+				title = 'This site is vulnerable!';
+				break;
+			case BLEED_STATE_OK:
+				break;
+			case BLEED_STATE_ERR:
+				icon_name = 'logo-err48.png';
+				title = 'Use Caution';
+				break;
+			case BLEED_STATE_REQUEST_ERR:
+				icon_name = 'logo-err48.png';
+				title = 'Error';
+				break;
+			default:
+				break;
+		}
+	}
+	
+	chrome.browserAction.setIcon({path: icon_name});
+	chrome.browserAction.setTitle({title: title});
+}
+
+/*
+ * Manage tab changes.
+ */
+chrome.tabs.onActivated.addListener(function(tabId, windowId) {
+	//alert('tab changed: tab='+tabId+', windowId ='+windowId);
+	//close open notifications on tab change
+	if(notification){
+		notification.cancel();
+	}
+	
+	//reset the 'heartbleed' icon at top right of browser to the
+	//appropriate value for that tab (check cache) or to the default 'ok' icon for new tabs
+	chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+		var currentURL = tabs[0].url;
+		var parsedURL = parseURL(currentURL);
+	 
+		//set default icon for new tabs, internal URLs or white listed sites
+		if(currentURL.indexOf('chrome://newtab') >=0 || 
+				isWhiteListSite(parsedURL.domain) ||
+				protocolArray.indexOf(parsedURL.protocol) >= 0){
+			var ok_icon = 'logo-ok48.png';
+			chrome.browserAction.setIcon({path: ok_icon});
+		}
+		//otherwise check tab cache
+		else{
+			var resultCode = getResultCodeForTab(parsedURL.domain);
+			setBrowserAction(resultCode);
+		}
+  });
+});
 
 // background script for access to Chrome APIs
 chrome.tabs.onUpdated.addListener(function(tabId, info) {
