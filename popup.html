@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Chromebleed Checker</title>
+        <title>Chromebleed | Heartbleed Checker</title>
         <style>
             body {
                 width: 360px;
@@ -15,7 +15,14 @@
             a:hover {
                 font-weight: bold;
             }
-
+            .boldred {
+                color: #b90000;
+                font-weight: bold;
+                cursor: pointer; cursor: hand;
+            }
+            .logoright {
+                min-height: 49px;
+            }
             .social {
                 font-size: 12px;
             }
@@ -27,7 +34,8 @@
     </head>
     <body>
         <img id="logosrc" src="icon48.png">
-        <p><b><a href="https://github.com/StopBleed/chromebleed" target="_blank">Chromebleed</a> Checker</b> is currently <span id="runningdesc">running in background</span>.</p>
+        
+        <p class="logoright"><b><input type="checkbox" id="isActivated"><label class="boldred" for="isActivated">Chromebleed</label></b> is currently <span id="runningdesc">running in background</span>. See options.</p>
         <p>This extension checks to see if the site you are currently using is affected by the <a href="http://heartbleed.com/" target="_blank">Heartbleed</a> bug.</p>
         <p class="social">This tool was originally developed by <a href="http://twitter.com/mightyshakerjnr" target="_blank">Jamie Hoyle</a><br/>
             Further contributions from <a href="http://twitter.com/3_alves" target="_blank">Tony Alves</a>.</br>
