@@ -39,7 +39,7 @@ function parseURL(url) {
 }
 
 function requestURL(url, callback) {
-  var bleedURL = 'http://bleed-1161785939.us-east-1.elb.amazonaws.com/bleed/' + url;
+  var bleedURL = 'https://hbelb.filippo.io/bleed/' + url;
   return new promise.get(bleedURL).then(function(error, text, xhr) {
       //console.log("[xhr]: " + xhr);
       if (error) {
