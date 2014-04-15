@@ -8,6 +8,15 @@ Whilst some servers have been patched already, many remain that have not been pa
 
 **Beware of gremlins** - this was developed in about half an hour rather late at night. Bugs will exist somewhere!  
 
+## Contributing
+
+Everyone is welcome to help [contribute](CONTRIBUTING.md) and improve this project. There are several ways you can contribute:
+
+* Reporting issues (please read [issue guidelines](https://github.com/necolas/issue-guidelines))
+* Suggesting new features
+* Writing or refactoring code
+* Fixing [issues](https://github.com/StopBleed/chromebleed/issues)
+ 
 ##Download  
 https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic
 
