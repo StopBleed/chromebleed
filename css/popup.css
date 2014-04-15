@@ -1,0 +1,27 @@
+body {
+    width: 360px;
+    font-family: 'Avenir Next', 'Helvetica Neue', sans-serif;
+}
+a {
+    color: #b90000;
+    text-decoration: none;
+}
+
+a:hover {
+    font-weight: bold;
+}
+.boldred {
+    color: #b90000;
+    font-weight: bold;
+    cursor: pointer; cursor: hand;
+}
+.logoright {
+    min-height: 49px;
+}
+.social {
+    font-size: 12px;
+}
+img {
+    float: left;
+    margin: 0 1em 1em 0;
+}

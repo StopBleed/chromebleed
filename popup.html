@@ -1,32 +1,19 @@
 <html>
-  <head>
-    <title>Chromebleed Checker</title>
-  </head>
-  <style>
-    body {
-      width: 300px;
-      font-family: 'Avenir Next', 'Helvetica Neue', sans-serif;
-    }
-
-    a {
-      color: #b90000;
-      text-decoration: none;
-    }
-
-    a:hover {
-      font-weight: bold;
-    }
-
-    .social {
-      font-size: 12px;
-    }
-  </style>
-  <body>
-    <p><b><a href="https://github.com/StopBleed/chromebleed" target="_blank">Chromebleed</a> Checker</b> is currently running in the background.</p>
-    <p>This checks to see if the site you are currently using is affected by the <a href="http://heartbleed.com/" target="_blank">Heartbleed</a> bug.</p>
-    <p class="social">This tool was originally developed by <a href="http://twitter.com/mightyshakerjnr" target="_blank">Jamie Hoyle</a><br/>
-        Further contributions from <a href="http://twitter.com/3_alves" target="_blank">Tony Alves</a>.</br>
-        It is based on the excellent work of <a href="https://twitter.com/filosottile" target="_blank">Filippo Valsorda</a>.</p>
-    <p class="social">You can contribute or get the latest bleeding edge changes on <b><a href="https://github.com/StopBleed/chromebleed" target="_blank">Github</a></b></p>
-  </body>
+    <head>
+        <title>Chromebleed | Heartbleed Checker</title>
+        <link rel="stylesheet" href="css/popup.css">
+    </head>
+    <body>
+        <img id="logosrc" src="icon48.png">
+        
+        <p class="logoright"><b><input type="checkbox" id="isActivated"><label class="boldred" for="isActivated">Chromebleed</label></b> is currently <span id="runningdesc">running in background</span>. See options.</p>
+        <p>This extension checks to see if the site you are currently using is affected by the <a href="http://heartbleed.com/" target="_blank">Heartbleed</a> bug.</p>
+        <p class="social">This tool was originally developed by <a href="http://twitter.com/mightyshakerjnr" target="_blank">Jamie Hoyle</a><br/>
+            Further contributions from <a href="http://twitter.com/3_alves" target="_blank">Tony Alves</a>.</br>
+            Special thanks go to our <a href="https://github.com/StopBleed/chromebleed/graphs/contributors" target="_blank">Other Contributors</a> also.</br>
+            It is based on the excellent work of <a href="https://twitter.com/filosottile" target="_blank">Filippo Valsorda</a>.</p>
+        <p class="social">You can contribute or get the latest bleeding edge changes on <b><a href="https://github.com/StopBleed/chromebleed" target="_blank">Github</a></b></p>
+        <div id="openoptions"><b><a href="#">Open Options</a></b></div>
+    <script src="js/popup.js"></script>
+    </body>
 </html>

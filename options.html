@@ -4,7 +4,7 @@ An option page for configuring notifications.
 -->
 <!DOCTYPE html>
 <title>Chromebleed Options</title>
-<link rel="stylesheet" href="options.css">
+<link rel="stylesheet" href="css/options.css">
 <div>
     <h1>
         <img src="icon128.png" alt="Chromebleed"> Chromebleed
@@ -19,8 +19,10 @@ An option page for configuring notifications.
         <br/>
         <div><input type="checkbox" name="isShowingAll" id="isShowingAll" checked> <label for="isShowingAll">Show All Notifications</label></div>
         <br/>
+        <div><input type="checkbox" name="isShowOnGoogle" id="isShowOnGoogle" checked> <label for="isShowOnGoogle">Show Notifications on Google Search (www.google.com)</label></div>
+        <br/>
         <div><button type="button" name="clearCachedSites" id="clearCachedSites">Clear Cached Sites</button></div>
     </form>
 </div>
-<script src="lib/cached.js"></script>
-<script src="options.js"></script>
+<script src="js/cached.js"></script>
+<script src="js/options.js"></script>
