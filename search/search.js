@@ -32,7 +32,7 @@ function checkURL(host, tld, parsedDomain, thisa) {
                 //it is vuln.
                 console.log("  Vuln Site: " + parsedDomain);
                 cacheBleedSite(parsedDomain);
-                thisa.prepend('<img class="chromebleedError" src="https://raw.githubusercontent.com/hyl/chromebleed/master/icon128.png" alt="Chromebleed Checker" />');
+                thisa.prepend('<img class="chromebleedError" src="https://raw.githubusercontent.com/stopbleed/chromebleed/master/icon48.png" alt="Chromebleed Checker" />');
                 return 'fail';
             } else {
                 //add to the cached sites
@@ -42,7 +42,7 @@ function checkURL(host, tld, parsedDomain, thisa) {
         });
     } else {
         if (isBleedSite)
-            thisa.prepend('<img class="chromebleedError" src="https://raw.githubusercontent.com/hyl/chromebleed/master/icon128.png" alt="Chromebleed Checker" />');
+            thisa.prepend('<img class="chromebleedError" src="https://raw.githubusercontent.com/stopbleed/chromebleed/master/icon48.png" alt="Chromebleed Checker" />');
     }
 }
 
@@ -64,17 +64,28 @@ function checkElements() {
     });
 }
 
+var waitcount = 0;
 function waitForLoad() {
     console.log("isActivated=" + isActivated);
     console.log("isShowOnGoogle=" + isShowOnGoogle);
     if (isActivated && isShowOnGoogle) {
-        console.log("waiting..." + $('#pnnext').length)
+        console.log("waiting..." + waitcount + " - " + $('#pnnext').length)
         //wait for results to display
         if ($('#pnnext').length > 0) {
+            //remove any prior bleed icons
+            $('.chromebleedError').each(function() {
+                $(this).remove();
+            });
             //elements have arrived
             checkElements();
+            waitcount = 0;
         } else {
-            setTimeout(waitForLoad, 500);
+            waitcount++;
+            if (waitcount <= 20) {
+                setTimeout(waitForLoad, 500);
+            } else {
+                waitcount = 0;
+            }
         }
     }
 }
@@ -87,15 +98,24 @@ $(document).ready(function() {
 });
 $(window).load(function() {
     console.log("Checking Elements ----->");
-    setTimeout(waitForLoad, 2000);
+    document.getElementById("gbqfb").onclick = runCheckLater;
+    document.getElementById("gbqfsa").onclick = runCheckLater;
+    document.getElementById("gbqfq").onchange = runCheckLater;
 });
-$('#gbqfb').click(function() {
-    searchText = $('#gbqfq').val();
-    console.log("Search Update ----->");
-    if (searchText !== lastSearchText)
-        setTimeout(waitForLoad, 2000);
-});
-$('#gbqfsa').click(function() {
-    console.log("WaitFor Load ----->");
-    setTimeout(waitForLoad, 2000);
-});
+function runCheckLater(event) {
+    if (!(isActivated && isShowOnGoogle)) return;
+    console.log("RunningLater>");
+    if (event.target) {
+        var mils = 500;
+        switch (event.target.id) {
+            case 'gbqfb':
+            case 'gbqfsa':
+                mils = 2000;
+                break;
+            default:
+                mils = 1000;
+                break;
+        }
+        setTimeout(waitForLoad, mils);
+    }
+}
