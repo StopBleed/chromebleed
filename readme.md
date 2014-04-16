@@ -16,6 +16,7 @@ Everyone is welcome to help [contribute](CONTRIBUTING.md) and improve this proje
 * Suggesting new features
 * Writing or refactoring code
 * Fixing [issues](https://github.com/StopBleed/chromebleed/issues)
+* Make sure to make changes and pull requests to the current version vX.X.X branch.  The master branch is for merged sub versions.  An admin will let you know when to submit a pull request to master. You can always ask in the [issues](https://github.com/StopBleed/chromebleed/issues) section and label `question`, if not sure.
  
 ##Download  
 https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic
