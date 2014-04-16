@@ -13,7 +13,7 @@ if (window.webkitNotifications && window.webkitNotifications.checkPermission() =
 // Conditionally initialize the options.
 if (!localStorage.isInitialized) {
     localStorage.isActivated = true;   // The notification activation.
-    localStorage.isShowingAll = false;   // The showing of Ok domains.
+    localStorage.isShowingAll = true;   // The showing of Ok domains.
     localStorage.isShowOnGoogle = false;   // The showing of on Google Search.
     localStorage.isInitialized = true; // The option initialization.
 }
