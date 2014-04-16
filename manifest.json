@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Chromebleed",
   "description": "Displays a warning if the site you are browsing is affected by the Heartbleed bug",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "permissions": [
     "notifications",
     "activeTab",
@@ -30,7 +30,7 @@
   "browser_action": {
     "default_icon": "icon48.png",
     "default_popup": "popup.html",
-    "default_title": "Chromebleed 2.1.1",
+    "default_title": "Chromebleed 2.1.2",
     "default_popup": "popup.html"
   },
   "web_accessible_resources": [
