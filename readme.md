@@ -1,6 +1,6 @@
-#Stopbleed
-#Another official release of Chromebleed into the Chrome Store
-#Will always follow the original version and releases!
+#StopBleed's Chromebleed Extension
+#Official release of Chromebleed into the Chrome Store
+#Original versions and releases!
 Displays a warning if the site you are browsing is affected by the Heartbleed bug.  
 
 ##What does this do?
