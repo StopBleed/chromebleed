@@ -1,7 +1,12 @@
-#StopBleed's Chromebleed Extension
-#Official release of Chromebleed into the Chrome Store
+#Chromebleed Extension in Chrome Store
 #Original versions and releases!
 Displays a warning if the site you are browsing is affected by the Heartbleed bug.  
+Chromebleed originally created by [Jamie Hoyle](https://twitter.com/mightyshakerjnr)  
+Active admins and main developers [Tony Alves](https://twitter.com/3_alves) and [Jamie Hoyle](https://twitter.com/mightyshakerjnr)  
+
+There are two mirrors on the Chrome Store.  They are following this repository versions always.  They may have a different versions due to Google release policies.  We are trying to resolve this issue.  
+[Chromebleed](https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic) version 2.0.0  
+[Stopbleed](https://chrome.google.com/webstore/detail/stopbleed/okdekadbjjhbnlmldheinccioijofhgc) Version 2.1.2  
 
 ##What does this do?
 Many HTTPS-secured sites on the internet use OpenSSL. Unfortunately, a major vulnerability in OpenSSL was disclosed - known as the Heartbleed bug - yesterday that put hundreds of thousands of servers at risk of compromise.  
@@ -20,8 +25,9 @@ Everyone is welcome to help [contribute](CONTRIBUTING.md) and improve this proje
 * Fixing [issues](https://github.com/StopBleed/chromebleed/issues)
 * Make sure to make changes and pull requests to the current version vX.X.X branch.  The master branch is for merged sub versions.  An admin will let you know when to submit a pull request to master. You can always ask in the [issues](https://github.com/StopBleed/chromebleed/issues) section and label `question`, if not sure.
  
-##Download  
-https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic
+##Download from Chrome Store  
+Chromebleed [https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic](https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic)  
+Stopbleed [https://chrome.google.com/webstore/detail/stopbleed/okdekadbjjhbnlmldheinccioijofhgc](https://chrome.google.com/webstore/detail/stopbleed/okdekadbjjhbnlmldheinccioijofhgc)
 
 ##LICENSE
 This software is licensed under [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT)
