@@ -73,7 +73,7 @@ function showNotification(result, parsedURL, isFixedDomain, isRepeated, cachedEr
         //keep open for 10 seconds then close
         //if not a vulnerability warning or already saw this vulnerablity
         if ((result && result.code !== 0) || isFixedDomain || isRepeated) {
-            var milisecs = ((isRepeated || isFixedDomain) ? 2000 : 10000);
+            var milisecs = ((isRepeated || isFixedDomain) ? 4000 : 10000);
             notification.ondisplay = function(event) {
                 setTimeout(function() {
                     event.currentTarget.cancel();
