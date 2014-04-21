@@ -21,7 +21,7 @@ window.addEventListener('load', function() {
 });
 function updateVisual(isActive) {
     var icon_name = (isActive ? "icon48.png" : "logo-off48.png")
-    var title = (isActive ? "Chromebleed Active!" : "Chromebleed Off!")
+    var title = (isActive ? "Notifications Active!" : "Notifications Off!")
     document.getElementById("logosrc").src = icon_name;
     //also change the 'heartbleed' icon at top right of browser
     chrome.browserAction.setIcon({path: icon_name});
