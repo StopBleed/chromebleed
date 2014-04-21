@@ -20,13 +20,6 @@ window.addEventListener('load', function() {
     document.getElementById("openoptions").onclick = openOptions;
 });
 function updateVisual(isActive) {
-    var icon_name = (isActive ? "icon48.png" : "logo-off48.png")
-    var title = (isActive ? "Notifications Active!" : "Notifications Off!")
-    document.getElementById("logosrc").src = icon_name;
-    //also change the 'heartbleed' icon at top right of browser
-    chrome.browserAction.setIcon({path: icon_name});
-    //add tooltip with title
-    chrome.browserAction.setTitle({title: title});
     if (isActive) {
         document.getElementById("runningdesc").innerHTML = 'running in the background and activated';
     } else {
@@ -39,5 +32,10 @@ function changeActivation(event) {
         localStorage.isActivated = isChecked;
         updateVisual(isChecked);
         console.log("isActivated:" + localStorage.isActivated);
+        chrome.runtime.sendMessage({method: "getCBLocalStorage", key: "update"}, function(response) {
+                if (response) {
+                    console.log("returned:"+response.method);
+                }   
+        });
     }
 }
