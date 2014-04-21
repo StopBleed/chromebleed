@@ -20,7 +20,7 @@ if (!localStorage.isInitialized) {
 
 //show a notification dialog to the user e.g. on error, success, warning
 function showNotification(result, parsedURL, isFixedDomain, isRepeated, cachedError) {
-    console.log("result=" + result + ",result.code=" + result.code +",result.error=" + result.error);
+    console.log("result=" + result + ",result.code=" + result.code + ",result.error=" + result.error);
 
     //default icon
     var icon_name = 'logo-ok48.png';
@@ -56,7 +56,7 @@ function showNotification(result, parsedURL, isFixedDomain, isRepeated, cachedEr
         notification.cancel();
     }
 
-    var showIt = (result && result.code === 0) || JSON.parse(localStorage.isShowingAll); 
+    var showIt = (result && result.code === 0) || JSON.parse(localStorage.isShowingAll);
     if (showIt) {
         //show the notification message with appropriate content
         notification = webkitNotifications.createNotification(
@@ -89,7 +89,7 @@ function showNotification(result, parsedURL, isFixedDomain, isRepeated, cachedEr
 /*
  * Change the 'heartbleed' icon and title at top right of browser.
  */
-function setBrowserAction(resultCode,parsedURL) {
+function setBrowserAction(resultCode, parsedURL) {
 
     var icon_name = 'logo-ok48.png';
     var title = parsedURL.domain + ' seems Ok!';
@@ -129,28 +129,12 @@ chrome.tabs.onActivated.addListener(function(activeInfo) {
     if (window.webkitNotifications && window.webkitNotifications.checkPermission() === 0) {
         console.log("-------------- onActivated ---------------");
         console.log(activeInfo);
-    //close open notifications on tab change
-    if (notification) {
-        notification.cancel();
-    }
-    }
-
-    //re-run checks on tab change
-    chrome.tabs.query({currentWindow: true, active: true}, function(tabs) {
-        var currentURL = tabs[0].url;
-        var parsedURL = parseURL(currentURL);
-
-        //set default icon for internal URLs (incl. new tabs)
-        if (protocolArray.indexOf(parsedURL.protocol) >= 0) {
-            var ok_icon = 'logo-ok48.png';
-            chrome.browserAction.setIcon({path: ok_icon});
-            chrome.browserAction.setTitle({title: "Localized Path [" + parsedURL.protocol + "], Ok!"});
+        //close open notifications on tab change
+        if (notification) {
+            notification.cancel();
         }
-        //otherwise check cache or re-run heartbleed check if cached value has expired
-        else {
-            checkHeartBleed();
-        }
-    });
+        checkHeartBleed();
+    }
 });
 
 // background script for access to Chrome APIs
