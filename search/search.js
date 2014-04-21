@@ -90,20 +90,9 @@ function waitForLoad() {
     }
 }
 
-//upon page load, check page elements
-$(document).ready(function() {
-    // Load options data when page is started
-    loadOptions();
-    setTimeout(waitForLoad, 2000);
-});
-$(window).load(function() {
-    console.log("Checking Elements ----->");
-    document.getElementById("gbqfb").onclick = runCheckLater;
-    document.getElementById("gbqfsa").onclick = runCheckLater;
-    document.getElementById("gbqfq").onchange = runCheckLater;
-});
 function runCheckLater(event) {
-    if (!(isActivated && isShowOnGoogle)) return;
+    if (!(isActivated && isShowOnGoogle))
+        return;
     console.log("RunningLater>");
     if (event.target) {
         var mils = 500;
@@ -119,3 +108,15 @@ function runCheckLater(event) {
         setTimeout(waitForLoad, mils);
     }
 }
+
+//upon page load, check page elements
+$(document).ready( function(event) {
+    console.log("DOM fully loaded");
+    $("#gbqfb").click(runCheckLater);
+    $("#gbqfsa").click(runCheckLater);
+    $("#gbqfq").change(runCheckLater);
+    // Load options data when page is started
+    loadOptions();
+    setTimeout(waitForLoad, 2000);
+});
+
