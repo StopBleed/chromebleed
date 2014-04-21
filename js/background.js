@@ -11,11 +11,16 @@ if (window.webkitNotifications && window.webkitNotifications.checkPermission() =
 }
 
 // Conditionally initialize the options.
-if (!localStorage.isInitialized) {
+if (localStorage.isInitialized === undefined || !localStorage.isInitialized) {
     localStorage.isActivated = true;   // The notification activation.
     localStorage.isShowingAll = true;   // The showing of Ok domains.
     localStorage.isShowOnGoogle = false;   // The showing of on Google Search.
     localStorage.isInitialized = true; // The option initialization.
+} else {
+    localStorage.isInitialized = true; // The option initialization.
+    if (localStorage.isActivated === undefined) localStorage.isActivated = true;
+    if (localStorage.isShowingAll === undefined) localStorage.isShowingAll = true;
+    if (localStorage.isShowOnGoogle === undefined) localStorage.isShowOnGoogle = false;
 }
 
 //show a notification dialog to the user e.g. on error, success, warning
