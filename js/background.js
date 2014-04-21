@@ -237,6 +237,11 @@ chrome.runtime.onMessage.addListener(
                         var returnVal = {isActivated: localStorage.isActivated, isShowingAll: localStorage.isShowingAll, isShowOnGoogle: localStorage.isShowOnGoogle};
                         sendResponse(returnVal);
                         break;
+                    case 'update':
+                        var returnVal = {method: request.key};
+                        checkHeartBleed();
+                        sendResponse(returnVal);
+                        break;
                     default:
                         sendResponse({}); // snub them.
                         break;
