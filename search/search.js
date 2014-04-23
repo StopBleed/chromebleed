@@ -20,7 +20,6 @@ function loadOptions() {
 }
 
 function checkURL(host, tld, parsedDomain, thisa) {
-    var url = host + '.' + tld;
     var isOk = isCachedSite(parsedDomain);
     var isBleedSite = isCachedBleedSite(parsedDomain);
     if (!isBleedSite && !isOk) {
@@ -47,8 +46,6 @@ function checkURL(host, tld, parsedDomain, thisa) {
 }
 
 function checkElements() {
-//In search we only cache bleed sites for the current search
-    resetCachedBleedSites();
     //set the eid
     eid = $('#rso').attr('eid');
     //and search text
@@ -115,8 +112,9 @@ $(document).ready( function(event) {
     $("#gbqfb").click(runCheckLater);
     $("#gbqfsa").click(runCheckLater);
     $("#gbqfq").change(runCheckLater);
+    //In search we only cache bleed sites for the current search
+    resetCachedBleedSites();
     // Load options data when page is started
     loadOptions();
     setTimeout(waitForLoad, 2000);
 });
-
