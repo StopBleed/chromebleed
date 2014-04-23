@@ -6,7 +6,7 @@ Active admins and main developers [Tony Alves](https://twitter.com/3_alves) and 
 
 There are two mirrors on the Chrome Store.  They are following this repository versions always.  They may have a different versions due to Google release policies.  We are trying to resolve this issue.  
 [Chromebleed](https://chrome.google.com/webstore/detail/chromebleed/eeoekjnjgppnaegdjbcafdggilajhpic) version 2.0.0  
-[Stopbleed](https://chrome.google.com/webstore/detail/stopbleed/okdekadbjjhbnlmldheinccioijofhgc) Version 2.1.2  
+[Stopbleed](https://chrome.google.com/webstore/detail/stopbleed/okdekadbjjhbnlmldheinccioijofhgc) Version 2.2.0  
 
 ##What does this do?
 Many HTTPS-secured sites on the internet use OpenSSL. Unfortunately, a major vulnerability in OpenSSL was disclosed - known as the Heartbleed bug - yesterday that put hundreds of thousands of servers at risk of compromise.  
