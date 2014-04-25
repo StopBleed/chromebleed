@@ -6,14 +6,31 @@
     <body>
         <img id="logosrc" src="icon48.png">
         
-        <p class="logoright"><b><input type="checkbox" id="isActivated"><label class="boldred" for="isActivated">Chromebleed</label></b> is currently <span id="runningdesc">running in background</span>. See options.</p>
-        <p>This extension checks to see if the site you are currently using is affected by the <a href="http://heartbleed.com/" target="_blank">Heartbleed</a> bug.</p>
+        <p class="logoright"><b><input type="checkbox" id="isActivated"><label class="boldred" for="isActivated"><span id="runningversion"></span></label></b> is currently <span id="runningdesc">running in background</span>. See options.</p>
+        <hr/>
+        <div id="openoptions"><b><a href="#">Open Options</a></b></div>
+        <hr/>
+        <div class="legend">
+            <div class="legenditem"><img class="smicon" src="icon48.png">Site is vulnerable to the heartbleed bug</div>
+            <div class="legenditem"><img class="smicon" src="logo-ok48.png">Tested and seems Ok.</div>
+            <div class="legenditem"><img class="smicon" src="logo-err48.png">Could not test due to server reject, timeout, or etc. Use caution, do research.</div>
+            <div class="legenditem"><img class="smicon" src="logo-off48.png">The extension is not active.</div>
+        </div>
+        <hr/>
+        <div>
+            <p>This extension checks to see if the site you are currently using is affected by the <a href="http://heartbleed.com/" target="_blank">Heartbleed</a> bug.</p>
+            <p><a href="https://chromebleed.uservoice.com/" target="_blank">Report Issues &amp; Feature Requests Here</a><br/></p>
+        </div>
+        <hr/>
         <p class="social">This tool was originally developed by <a href="http://twitter.com/mightyshakerjnr" target="_blank">Jamie Hoyle</a><br/>
             Further contributions from <a href="http://twitter.com/3_alves" target="_blank">Tony Alves</a>.</br>
             Special thanks go to our <a href="https://github.com/StopBleed/chromebleed/graphs/contributors" target="_blank">Other Contributors</a> also.</br>
             It is based on the excellent work of <a href="https://twitter.com/filosottile" target="_blank">Filippo Valsorda</a>.</p>
         <p class="social">You can contribute or get the latest bleeding edge changes on <b><a href="https://github.com/StopBleed/chromebleed" target="_blank">Github</a></b></p>
-        <div id="openoptions"><b><a href="#">Open Options</a></b></div>
-    <script src="js/popup.js"></script>
+         <hr/>
+        <div>
+            <a href="https://github.com/StopBleed/chromebleed/blob/master/LICENSE.md" target="_blank">MIT Licensed</a> and Open Source<br/> 
+        </div>
+   <script src="js/popup.js"></script>
     </body>
 </html>
