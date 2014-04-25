@@ -1,4 +1,5 @@
 var optionsTabID = null;
+var nameversion = chrome.app.getDetails().name + ' (' + chrome.app.getDetails().version + ')';
 function openOptions() {
     chrome.tabs.create({'url': chrome.extension.getURL('options.html')}, function(tab) {
         // Tab opened.
@@ -18,6 +19,9 @@ window.addEventListener('load', function() {
     // set the event listeners
     document.getElementById("isActivated").onclick = changeActivation;
     document.getElementById("openoptions").onclick = openOptions;
+    
+    //Set the version
+    document.getElementById("runningversion").innerHTML = nameversion;
 });
 function updateVisual(isActive) {
     if (isActive) {

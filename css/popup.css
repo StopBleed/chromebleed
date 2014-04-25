@@ -21,7 +21,18 @@ a:hover {
 .social {
     font-size: 12px;
 }
-img {
+#logosrc {
     float: left;
     margin: 0 1em 1em 0;
+}
+.legend {
+}
+.legenditem {
+    margin: 0 0 10px 40px;
+    vertical-align: middle;
+}
+.smicon {
+    height: 16px;
+    width: 16px;
+    margin: 0 5px 0 -20px;
 }
