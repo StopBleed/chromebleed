@@ -20,7 +20,7 @@ Whilst some servers have been patched already, many remain that have not been pa
 Everyone is welcome to help [contribute](CONTRIBUTING.md) and improve this project. There are several ways you can contribute:
 
 * Reporting issues (please read [issue guidelines](https://github.com/necolas/issue-guidelines))
-* Suggesting new features
+* [Suggesting new features](https://chromebleed.uservoice.com/)
 * Writing or refactoring code
 * Fixing [issues](https://github.com/StopBleed/chromebleed/issues)
 * Make sure to make changes and pull requests to the current version vX.X.X branch.  The master branch is for merged sub versions.  An admin will let you know when to submit a pull request to master. You can always ask in the [issues](https://github.com/StopBleed/chromebleed/issues) section and label `question`, if not sure.
