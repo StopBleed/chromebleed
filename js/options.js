@@ -51,5 +51,10 @@ window.addEventListener('load', function() {
         alert('Cached Sites Cleared!');
         //console.log(" Cached Sites after clear:" + JSON.stringify(cachedSites) + JSON.stringify(cachedBleedSites));
     };
-
+    
+    //Set the version
+    var name = chrome.app.getDetails().name;
+    var nameversion = name + ' (' + chrome.app.getDetails().version + ')';
+    document.getElementById("runningversion").innerHTML = nameversion;
+    document.getElementById("runningname").innerHTML = name;
 });
